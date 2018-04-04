@@ -9,8 +9,31 @@
 import UIKit
 
 class ToDoListViewController: UITableViewController {
+    
+    var textField = UITextField()
 
-    let ItemArray = ["Hello", "Hello 1", "Hello 2", "Hello 3"]
+    @IBAction func AddButtonPressed(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Add new Item" , message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            // what will happen when the user clicked add button items
+            if self.textField.text != ""{
+            self.ItemArray.append(self.textField.text!)
+            self.tableView.reloadData()
+            }else{
+                print("Error")
+            }
+            
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new Item"
+            self.textField = alertTextField
+         //   print(alertTextField.text!)
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    var ItemArray = ["Hello", "Hello 1", "Hello 2", "Hello 3"]
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
