@@ -10,29 +10,17 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
     
-    let defaults = UserDefaults.standard
+    //let defaults = UserDefaults.standard
+     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     var ItemArray = [Item]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(dataFilePath)
         
-        let newItem = Item()
-        newItem.title = "Find Mike"
-        ItemArray.append(newItem)
         
-        let newItem1 = Item()
-        newItem1.title = "Find Mike"
-        ItemArray.append(newItem1)
-        
-        let newItem2 = Item()
-        newItem2.title = "Find Mike"
-        ItemArray.append(newItem2)
-        
-       
-        if let items = defaults.array(forKey: "ToDoListArray") as? [Item]{
-            ItemArray = items
+        loadItems()
         }
-    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -62,7 +50,8 @@ class ToDoListViewController: UITableViewController {
         print(ItemArray[indexPath.row].title)
         
         ItemArray[indexPath.row].done = !ItemArray[indexPath.row].done
-        tableView.reloadData()
+        saveItems()
+       // tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
        
         
@@ -79,10 +68,9 @@ class ToDoListViewController: UITableViewController {
             newItem.title = textField.text!
             
                 self.ItemArray.append(newItem)
-                self.defaults.setValue(self.ItemArray, forKey: "ToDoListArray")
-                self.tableView.reloadData()
-            
-        }
+               // self.defaults.setValue(self.ItemArray, forKey: "ToDoListArray")
+            self.saveItems()
+                 }
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new Item"
             textField = alertTextField
@@ -92,5 +80,33 @@ class ToDoListViewController: UITableViewController {
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
+    //Mark - Model Manupulation method
+    func saveItems(){
+        let encoder = PropertyListEncoder()
+        do{
+            let data = try encoder.encode(ItemArray)
+            try data.write(to: dataFilePath!)
+        }catch{
+            print("Error \(error)")
+        }
+        
+        self.tableView.reloadData()
+        
+        
+    }
+    func loadItems(){
+        if let data = try? Data(contentsOf: dataFilePath!){
+            let decoder = PropertyListDecoder()
+            do{
+            ItemArray = try decoder.decode([Item].self, from: data)
+            }catch{
+                print("Error \(error)")
+            }
+            
+            
+        }
+        
+    }
+    
 }
 
