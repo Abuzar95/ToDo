@@ -21,7 +21,7 @@ class ToDoListViewController: UITableViewController {
        // print(dataFilePath)
         
         
-       // loadItems()
+       loadItems()
         }
 
     override func didReceiveMemoryWarning() {
@@ -59,6 +59,22 @@ class ToDoListViewController: UITableViewController {
         
     }
     
+//    //Mark - Table view delegate - Delete NSManagedObject
+//    
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//       // print(ItemArray[indexPath.row].title!)
+//        
+//        context.delete(ItemArray[indexPath.row])
+//        ItemArray.remove(at: indexPath.row)
+//        
+//       // ItemArray[indexPath.row].done = !ItemArray[indexPath.row].done
+//        saveItems()
+//        // tableView.reloadData()
+//        tableView.deselectRow(at: indexPath, animated: true)
+//        
+//        
+//    }
+    
     @IBAction func AddButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         
@@ -95,19 +111,14 @@ class ToDoListViewController: UITableViewController {
         
         
     }
-//    func loadItems(){
-//        if let data = try? Data(contentsOf: dataFilePath!){
-//            let decoder = PropertyListDecoder()
-//            do{
-//            ItemArray = try decoder.decode([Item].self, from: data)
-//            }catch{
-//                print("Error \(error)")
-//            }
-//
-//
-//        }
-//
-//    }
+    func loadItems(){
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do{
+            ItemArray = try context.fetch(request)
+        }catch{
+            print("Error Loading: /(erro)")
+        }
+    }
     
 }
 
