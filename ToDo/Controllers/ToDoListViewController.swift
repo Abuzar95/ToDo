@@ -29,7 +29,7 @@ class ToDoListViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    //Mark - tableView data source
+    //MARK: - tableView data source
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "ToDoCell")
        // let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoCell", for: indexPath)
@@ -60,19 +60,19 @@ class ToDoListViewController: UITableViewController {
     }
     
 //    //Mark - Table view delegate - Delete NSManagedObject
-//    
+//
 //    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //       // print(ItemArray[indexPath.row].title!)
-//        
+//
 //        context.delete(ItemArray[indexPath.row])
 //        ItemArray.remove(at: indexPath.row)
-//        
+//
 //       // ItemArray[indexPath.row].done = !ItemArray[indexPath.row].done
 //        saveItems()
 //        // tableView.reloadData()
 //        tableView.deselectRow(at: indexPath, animated: true)
-//        
-//        
+//
+//
 //    }
     
     @IBAction func AddButtonPressed(_ sender: UIBarButtonItem) {
@@ -99,7 +99,7 @@ class ToDoListViewController: UITableViewController {
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-    //Mark - Model Manupulation method
+    //MARK: - Model Manupulation method
     func saveItems(){
          do{
             try context.save()
@@ -111,14 +111,45 @@ class ToDoListViewController: UITableViewController {
         
         
     }
-    func loadItems(){
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest() ){
+       //let request: NSFetchRequest<Item> = Item.fetchRequest()
         do{
             ItemArray = try context.fetch(request)
         }catch{
-            print("Error Loading: /(erro)")
+            print("Error Loading: \(error)")
         }
     }
     
 }
+ //MARK: - Search bar Methods
+extension ToDoListViewController : UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//        do{
+//            ItemArray = try context.fetch(request)
+//        }catch{
+//            print("Error Loading: /(erro)")
+//        }
 
+        loadItems(with: request)
+        tableView.reloadData()
+        
+    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0{
+       loadItems()
+       tableView.reloadData()
+            
+    
+        DispatchQueue.main.async{
+            searchBar.resignFirstResponder()
+        }
+        }
+    else{
+            searchBarSearchButtonClicked(searchBar)
+        }
+}
+}
