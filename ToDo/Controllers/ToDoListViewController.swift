@@ -127,7 +127,7 @@ class ToDoListViewController: UITableViewController {
         }else{
             request.predicate = categoryPredicate
         }
-            
+        
         do{
             ItemArray = try context.fetch(request)
         }catch{

@@ -81,7 +81,7 @@ class CategoryViewController: UITableViewController {
         do{
             try context.save()
         }catch{
-            print("Error loading Save Items: \(error)")
+            print("Error Saving Category: \(error)")
         }
         
         tableView.reloadData()
