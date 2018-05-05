@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +19,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
+        
+        let config = Realm.Configuration(
+            schemaVersion: 1,
+            migrationBlock: { migration, oldSchemaVersion in
+                if (oldSchemaVersion < 1) {
+                    migration.enumerateObjects(ofType: Category.className()){ (old, new) in
+                        new!["dataCreated"] = Data()
+                        
+                    }
+                    migration.enumerateObjects(ofType: Item.className()){ (old, new) in
+                        new!["dataCreated"] = Data()
+                        
+                    }
+                }
+                
+            }
+        )
+       
+        Realm.Configuration.defaultConfiguration  = config
         return true
     }
 
