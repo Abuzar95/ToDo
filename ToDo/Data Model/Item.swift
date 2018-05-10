@@ -12,6 +12,6 @@ import RealmSwift
 class Item : Object{
     @objc dynamic var title : String = ""
     @objc dynamic var checked = false
-    @objc dynamic var age = 24
+    @objc dynamic var dateCreated : Date?
     var parentCategory = LinkingObjects(fromType: Category.self, property: "items") // reverse realtion to Category class
 }

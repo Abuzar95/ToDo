@@ -39,6 +39,23 @@
             
             
         }
+        
+        
+        override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+            let delete = UITableViewRowAction(style: .destructive, title: "delete") { (action, indexPath) in
+                do{
+                    try self.realm.write {
+                        self.realm.delete((self.categories?[indexPath.row])!)
+                    }
+                }catch{
+                    print("Error Saving Category: \(error)")
+                }
+                
+                tableView.reloadData()
+                
+            }
+            return [delete]
+        }
         override func viewDidLoad() {
             super.viewDidLoad()
             LoadCategories()
